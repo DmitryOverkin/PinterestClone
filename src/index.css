@@ -17,12 +17,6 @@
   --color-black: #211922;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
   color: var(--color-black);
 }
