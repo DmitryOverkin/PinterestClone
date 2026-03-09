@@ -1,5 +1,11 @@
+import Header from "../../components/Header/Header";
+
 function MainContent() {
-  return <div className="bg-green-100 h-screen p-6"></div>;
+  return (
+    <div className="h-screen p-6">
+      <Header />
+    </div>
+  );
 }
 
 export default MainContent;
