@@ -3,7 +3,7 @@ import {SearchOutlined, UserOutlined, DownOutlined} from "@ant-design/icons";
 
 const Header = () => {
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex gap-4 py-6 items-center w-full sticky top-0 z-10 bg-white">
       <Input
         style={{
           backgroundColor: "rgba(100, 100, 100, 0.1)",

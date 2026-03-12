@@ -6,7 +6,7 @@ import MainContent from "./layouts/MainContent/MainContent";
 function App() {
   return (
     <>
-      <div className="grid grid-cols-[1fr_24fr]">
+      <div className="flex">
         <SideBar />
         <MainContent />
       </div>

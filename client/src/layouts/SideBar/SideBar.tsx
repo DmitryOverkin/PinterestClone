@@ -9,7 +9,7 @@ import {
 
 function SideBar() {
   return (
-    <div className="h-screen p-4 flex flex-col gap-6">
+    <div className="fixed left-0 top-0 h-screen w-20 p-4 flex flex-col gap-6 border-r border-gray-200 bg-white">
       <button className="p-3 rounded-xl cursor-pointer hover:bg-gray-100">
         <svg
           width="25px"
