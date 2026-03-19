@@ -1,48 +1,92 @@
 import {Masonry} from "antd";
+import {useEffect, useState, useRef} from "react";
 
-const imageList = [
-  "https://images.unsplash.com/photo-1510001618818-4b4e3d86bf0f",
-  "https://images.unsplash.com/photo-1507513319174-e556268bb244",
-  "https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2",
-  "https://images.unsplash.com/photo-1492778297155-7be4c83960c7",
-  "https://images.unsplash.com/photo-1508062878650-88b52897f298",
-  "https://images.unsplash.com/photo-1506158278516-d720e72406fc",
-  "https://images.unsplash.com/photo-1552203274-e3c7bd771d26",
-  "https://images.unsplash.com/photo-1528163186890-de9b86b54b51",
-  "https://images.unsplash.com/photo-1727423304224-6d2fd99b864c",
-  "https://images.unsplash.com/photo-1675090391405-432434e23595",
-  "https://images.unsplash.com/photo-1554196967-97a8602084d9",
-  "https://images.unsplash.com/photo-1491961865842-98f7befd1a60",
-  "https://images.unsplash.com/photo-1721728613411-d56d2ddda959",
-  "https://images.unsplash.com/photo-1731901245099-20ac7f85dbaa",
-  "https://images.unsplash.com/photo-1617694455303-59af55af7e58",
-  "https://images.unsplash.com/photo-1709198165282-1dab551df890",
-];
+type TImage = {
+  id: number;
+  src: {
+    medium: string;
+    large: string;
+  };
+};
 
 const MasonryComponent = () => {
+  const [images, setImages] = useState<TImage[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchImages = async (pageToLoad: number) => {
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `https://api.pexels.com/v1/curated?per_page=30&page=${pageToLoad}`,
+        {
+          headers: {
+            Authorization: import.meta.env.VITE_PEXELS_API_KEY,
+          },
+        },
+      );
+
+      const result = await response.json();
+
+      setImages((prev) => [...prev, ...result.photos]);
+      setPage(pageToLoad + 1);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (loading) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading) {
+          fetchImages(page);
+        }
+      },
+      {threshold: 0.1},
+    );
+
+    if (loaderRef.current) {
+      observer.observe(loaderRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [page, loading]);
+
   return (
-    <Masonry
-      columns={{
-        xs: 1,
-        sm: 2,
-        md: 3,
-        lg: 4,
-        xl: 5,
-        xxl: 6,
-      }}
-      gutter={16}
-      items={imageList.map((img, index) => ({
-        key: `item-${index}`,
-        data: img,
-      }))}
-      itemRender={({data}) => (
-        <img
-          src={`${data}?w=523&auto=format`}
-          alt="sample"
-          style={{width: "100%", borderRadius: "3.5%"}}
-        />
-      )}
-    />
+    <>
+      <Masonry
+        columns={{
+          xs: 1,
+          sm: 2,
+          md: 3,
+          lg: 4,
+          xl: 5,
+          xxl: 6,
+        }}
+        gutter={16}
+        items={images.map((img) => ({
+          key: img.id,
+          data: img.src.medium,
+        }))}
+        itemRender={({data}) => (
+          <img
+            loading="lazy"
+            src={data}
+            style={{width: "100%", borderRadius: "8px"}}
+          />
+        )}
+      />
+
+      <div ref={loaderRef} style={{height: 50}}>
+        {loading && <p>Загрузка...</p>}
+      </div>
+    </>
   );
 };
 
