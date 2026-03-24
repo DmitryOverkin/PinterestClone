@@ -1,16 +1,17 @@
 import "./App.css";
 
-import SideBar from "./layouts/SideBar/SideBar";
-import MainContent from "./layouts/MainContent/MainContent";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+import Home from "./pages/Home/Home";
+import Auth from "./pages/Auth/Auth";
 
 function App() {
   return (
-    <>
-      <div className="flex">
-        <SideBar />
-        <MainContent />
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
